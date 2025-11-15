@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mon Premier Cube Animé en Three.js</title>
+    <style>
+        /* Le CSS pour s'assurer que le rendu 3D prend tout l'écran */
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // --- 2. Initialisation des éléments de base ---
+
+        // Créer la scène (le monde 3D)
+        const scene = new THREE.Scene();
+
+        // Créer la caméra (le point de vue)
+        // PerspectiveCamera( champ de vision, ratio d'aspect, plan proche, plan lointain )
+        const camera = new THREE.PerspectiveCamera(
+            75, // field of view
+            window.innerWidth / window.innerHeight, // aspect ratio
+            0.1, // near clipping plane
+            1000 // far clipping plane
+        );
+
+        // Créer le moteur de rendu (qui affichera la scène sur l'écran)
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // --- 3. Création de l'objet 3D (le Cube) ---
+
+        // Définir la géométrie (la forme : un cube)
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+        // Définir le matériau (l'apparence : couleur verte)
+        // MeshPhongMaterial réagit aux lumières
+        const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+
+        // Créer l'objet Mesh (la combinaison de la forme et de l'apparence)
+        const cube = new THREE.Mesh(geometry, material);
+
+        // Ajouter le cube à la scène
+        scene.add(cube);
+
+        // Positionner la caméra légèrement en arrière pour voir le cube
+        camera.position.z = 5;
+
+        // --- 4. Ajout de la lumière (essentiel pour voir l'objet en 3D !) ---
+
+        // Lumière ambiante (illumine toute la scène de manière égale)
+        const ambientLight = new THREE.AmbientLight(0x404040); // lumière douce
+        scene.add(ambientLight);
+
+        // Lumière directionnelle (simule la lumière du soleil, donne des ombres)
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5).normalize();
+        scene.add(directionalLight);
+
+
+        // --- 5. La Boucle d'Animation ---
+
+        function animate() {
+            // Demander au navigateur d'appeler cette fonction avant le prochain rafraîchissement
+            requestAnimationFrame(animate);
+
+            // CODE D'ANIMATION : Faire tourner le cube
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+
+            // Rendre la scène (dessiner la nouvelle image)
+            renderer.render(scene, camera);
+        }
+
+        // Lancer la boucle d'animation
+        animate();
+
+        // --- 6. Gestion du redimensionnement de la fenêtre ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
